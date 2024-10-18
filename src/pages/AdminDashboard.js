@@ -28,11 +28,11 @@ import {
   Legend,
 } from "recharts";
 import { Calendar, Clock, DollarSign, Car } from "lucide-react";
-import { signOut } from "firebase/auth"; 
-import { useNavigate } from "react-router-dom"; 
+import { signOut } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 const AdminDashboard = () => {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const [bookings, setBookings] = useState([]);
   const [profits, setProfits] = useState([]);
   const [selectedTab, setSelectedTab] = useState("bookings");
@@ -167,12 +167,12 @@ const AdminDashboard = () => {
 
     if (now >= endTime && booking.status === "approved") {
       try {
-        const batch = writeBatch(db); 
+        const batch = writeBatch(db);
         const bookingRef = doc(db, "bookings", booking.id);
         batch.update(bookingRef, { status: "completed" });
 
         console.log(`Booking ${booking.id} marked as completed`);
-        await batch.commit(); 
+        await batch.commit();
         return true;
       } catch (error) {
         console.error("Error updating booking status:", error);
@@ -195,7 +195,7 @@ const AdminDashboard = () => {
             id: doc.id,
             ...bookingData,
             userName,
-            checkInTime: bookingData.checkInTime, 
+            checkInTime: bookingData.checkInTime,
           };
         })
       );
@@ -223,7 +223,6 @@ const AdminDashboard = () => {
     try {
       // Gonna remove logic related to parkingSlots collection because it's causing a bug
       // and we didn't manually input it in the database
-
       // const parkingSlotsRef = collection(db, "parkingSlots");
       // const querySnapshot = await getDocs(parkingSlotsRef);
       // let total = 0;
@@ -461,7 +460,7 @@ const AdminDashboard = () => {
         ...prevStats,
         occupied: occupiedSlots,
         available: availableSlots,
-        total: totalSlots, 
+        total: totalSlots,
       };
 
       setSlotUtilization([
@@ -551,7 +550,7 @@ const AdminDashboard = () => {
 
   const handleLogout = async () => {
     try {
-      await signOut(auth); 
+      await signOut(auth);
       console.log("Admin logged out successfully");
       navigate("/");
     } catch (error) {
@@ -568,7 +567,7 @@ const AdminDashboard = () => {
           </div>
           <div className="flex space-x-4">
             <button
-              onClick={handleLogout} 
+              onClick={handleLogout}
               className="px-3 py-1 md:px-4 md:py-2 rounded-full text-sm md:text-base border border-white hover:bg-white hover:text-gray-900 transition-colors"
             >
               Logout
@@ -582,19 +581,19 @@ const AdminDashboard = () => {
           <StatCard
             icon={Car}
             label="Total Slots"
-            value={parkingStats.total} 
+            value={parkingStats.total}
             className="text-sky-500"
           />
           <StatCard
             icon={Car}
             label="Available Slots"
-            value={parkingStats.available} 
+            value={parkingStats.available}
             className="text-green-500"
           />
           <StatCard
             icon={Clock}
             label="Occupied Slots"
-            value={parkingStats.occupied} 
+            value={parkingStats.occupied}
             className="text-red-500"
           />
           <StatCard

@@ -1,4 +1,3 @@
-// LandingPage.js
 import React, { useEffect, useState } from "react";
 import backgroundImage from "../assets/landingpage-bg.jpg";
 import { FaUsers, FaUserCheck, FaParking } from "react-icons/fa";
