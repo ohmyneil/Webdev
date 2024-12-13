@@ -285,30 +285,38 @@ const AdminDashboard = () => {
     return () => unsubscribe();
   }, []);
 
-  const updateParkingStatus = useCallback(async (updates) => {
-    const batch = writeBatch(db);
+  const updateParkingStatus = async (updates) => {
     const parkingStatusRef = doc(db, "parkingStatus", "current");
 
-    // Again, we're gonna remove logic related to updating parking slots
-    // Object.entries(updates.locations || {}).forEach(([locationKey, locationData]) => {
-    //   Object.entries(locationData).forEach(([vehicleType, typeData]) => {
-    //     const { occupied, reserved } = typeData;
-    //     for (let i = 1; i <= typeData.total; i++) {
-    //       const slotId = `${locationKey}_${vehicleType}_${i}`;
-    //       const slotRef = doc(db, "parkingSlots", slotId);
-    //       if (i <= occupied) {
-    //         batch.set(slotRef, { status: "occupied" }, { merge: true });
-    //       } else if (i <= occupied + reserved) {
-    //         batch.set(slotRef, { status: "reserved" }, { merge: true });
-    //       } else {
-    //         batch.set(slotRef, { status: "available" }, { merge: true });
-    //       }
-    //     }
-    //   });
-    // });
+    try {
+      // Check if the document exists
+      const parkingDoc = await getDoc(parkingStatusRef);
 
-    await batch.commit();
-  }, []);
+      if (parkingDoc.exists()) {
+        // Update the existing document
+        await updateDoc(parkingStatusRef, {
+          ...updates,
+          lastUpdated: serverTimestamp(),
+        });
+        console.log("Parking status updated.");
+      } else {
+        // Document does not exist; create it with default values
+        const defaultParkingStatus = {
+          total: 540, // Default total slots
+          occupied: 0, // Default occupied slots
+          available: 540, // Default available slots
+          locations: {}, // Default locations structure
+          lastUpdated: serverTimestamp(),
+          ...updates, // Merge with provided updates
+        };
+
+        await setDoc(parkingStatusRef, defaultParkingStatus);
+        console.log("Parking status created with default values.");
+      }
+    } catch (error) {
+      console.error("Error updating or creating parking status:", error);
+    }
+  };
 
   const handleBookingAction = useCallback(
     async (bookingId, action, parkingArea, vehicleType) => {
