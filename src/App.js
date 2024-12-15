@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { HashRouter as Router, Route, Routes } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import UserDashboard from "./pages/UserDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -20,7 +20,10 @@ const App = () => {
       setRegisteredUsers(usersSnapshot.size);
 
       // Fetch active users
-      const activeUsersQuery = query(usersCollection, where("active", "==", true));
+      const activeUsersQuery = query(
+        usersCollection,
+        where("active", "==", true)
+      );
       const activeUsersSnapshot = await getDocs(activeUsersQuery);
       setActiveUsers(activeUsersSnapshot.size);
     } catch (error) {
@@ -59,4 +62,3 @@ const App = () => {
 };
 
 export default App;
-
